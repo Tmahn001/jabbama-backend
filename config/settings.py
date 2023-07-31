@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,10 +39,68 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'accounts',
     'api',
     'corsheaders',
 ]
+SIMPLE_JWT = {
+    # Set the access token lifetime to 15 minutes
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+
+    # Set the refresh token lifetime to 30 days
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+
+    # Allow token refreshing only if the access token has not expired yet
+    'ROTATE_REFRESH_TOKENS': False,
+
+    # Sliding token refresh - if set to True, will refresh the access token
+    # every time it is used. For e-commerce sites, this might not be ideal
+    # as users might have long browsing sessions.
+    'SLIDING_TOKEN_REFRESH': False,
+
+    # To mitigate the risk of stolen refresh tokens, enable this setting to
+    # require a new refresh token for every refresh request.
+    'ALWAYS_ROTATE_REFRESH_TOKEN': True,
+
+    # Allow the use of the "Token" authentication header
+    'AUTH_HEADER_TYPES': ('Bearer',),
+
+    # Configure the authentication class used for obtaining an access token.
+    # 'Token' authentication is recommended as it is simpler and stateless.
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.authentication.TokenAuthentication',),
+
+    # Enable the "AUTH_COOKIE" setting to use a secure HTTP-only cookie for
+    # storing the access token. This helps protect against CSRF attacks.
+    'AUTH_COOKIE': 'access_token',
+
+    # Set the secure flag for the access token cookie to True if your site is
+    # served over HTTPS.
+    'AUTH_COOKIE_SECURE': False,
+
+    # Use HttpOnly flag on the access token cookie to prevent client-side
+    # JavaScript from accessing the cookie, mitigating XSS attacks.
+    'AUTH_COOKIE_HTTP_ONLY': True,
+
+    # Set the same-site attribute on the access token cookie to 'Lax' or 'Strict'
+    # to prevent CSRF attacks through cookies.
+    'AUTH_COOKIE_SAMESITE': 'Lax',
+
+    # Configure the name of the refresh token cookie, if you are using cookies
+    'AUTH_REFRESH_COOKIE': 'refresh_token',
+
+    # Set the secure flag for the refresh token cookie to True if your site is
+    # served over HTTPS.
+    'AUTH_REFRESH_COOKIE_SECURE': False,
+
+    # Use HttpOnly flag on the refresh token cookie to prevent client-side
+    # JavaScript from accessing the cookie, mitigating XSS attacks.
+    'AUTH_REFRESH_COOKIE_HTTP_ONLY': True,
+
+    # Set the same-site attribute on the refresh token cookie to 'Lax' or 'Strict'
+    # to prevent CSRF attacks through cookies.
+    'AUTH_REFRESH_COOKIE_SAMESITE': 'Lax',
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -58,7 +117,11 @@ ROOT_URLCONF = 'config.urls'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 100  # ubah page_size sesuai keinginan
+    'PAGE_SIZE': 100 ,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    
 }
 
 TEMPLATES = [
@@ -82,6 +145,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 #Cors
 CORS_ALLOW_ALL_ORIGINS = True
 
+#User account
+AUTH_USER_MODEL = 'accounts.CustomUser'
+AUTHENTICATION_BACKENDS = ['accounts.auth_backends.EmailBackend']
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

@@ -1,6 +1,7 @@
+import uuid
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser,  Group, Permission
 #from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import gettext_lazy as _
 
@@ -40,13 +41,28 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractUser):
-    username = None
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    username = models.CharField(_('username'), max_length=30, unique=True)
     email = models.EmailField(_('email address'), unique=True)
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
+    groups = models.ManyToManyField(
+        Group,
+        verbose_name=_('groups'),
+        blank=True,
+        related_name='custom_user_groups'  # Change this name to something unique
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name=_('user permissions'),
+        blank=True,
+        related_name='custom_user_permissions'  # Change this name to something unique
+    )
 
     def __str__(self):
         return self.email

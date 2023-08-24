@@ -7,6 +7,8 @@ from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    product_image = models.ImageField(upload_to="categories/")
+    description = models.TextField(null=True, blank=True)
     slug = models.SlugField(unique=True, blank=True)
 
     def __str__(self):

@@ -2,9 +2,19 @@ from rest_framework import serializers
 from .models import Category, Product, Order
 
 class CategorySerializer(serializers.ModelSerializer):
+    # Define a SerializerMethodField for the read-only field 'slug'
+    slug = serializers.SerializerMethodField()
+
     class Meta:
         model = Category
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'product_image', 'description', 'slug']
+
+    # Define a method to compute the value of 'slug'
+    def get_slug(self, obj):
+        # Assuming that 'slug' is a field in your Category model
+        return obj.slug
+
+
 
 class WriteProductSerializer(serializers.ModelSerializer):
     class Meta:

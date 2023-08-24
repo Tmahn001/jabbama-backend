@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,63 +45,43 @@ INSTALLED_APPS = [
     'api',
     'corsheaders',
 ]
+
+from datetime import timedelta
+
 SIMPLE_JWT = {
-    # Set the access token lifetime to 15 minutes
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),  # Adjusted to 1 hour for better security
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),  # Reduced to 30 days for improved security
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': False,
 
-    # Set the refresh token lifetime to 30 days
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ALGORITHM': 'HS256',  # You might consider using RS256 for better security
 
-    # Allow token refreshing only if the access token has not expired yet
-    'ROTATE_REFRESH_TOKENS': False,
+    # Additional security considerations, if needed
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
 
-    # Sliding token refresh - if set to True, will refresh the access token
-    # every time it is used. For e-commerce sites, this might not be ideal
-    # as users might have long browsing sessions.
-    'SLIDING_TOKEN_REFRESH': False,
-
-    # To mitigate the risk of stolen refresh tokens, enable this setting to
-    # require a new refresh token for every refresh request.
-    'ALWAYS_ROTATE_REFRESH_TOKEN': True,
-
-    # Allow the use of the "Token" authentication header
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
 
-    # Configure the authentication class used for obtaining an access token.
-    # 'Token' authentication is recommended as it is simpler and stateless.
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.authentication.TokenAuthentication',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
 
-    # Enable the "AUTH_COOKIE" setting to use a secure HTTP-only cookie for
-    # storing the access token. This helps protect against CSRF attacks.
-    'AUTH_COOKIE': 'access_token',
+    'JTI_CLAIM': 'jti',
 
-    # Set the secure flag for the access token cookie to True if your site is
-    # served over HTTPS.
-    'AUTH_COOKIE_SECURE': False,
-
-    # Use HttpOnly flag on the access token cookie to prevent client-side
-    # JavaScript from accessing the cookie, mitigating XSS attacks.
-    'AUTH_COOKIE_HTTP_ONLY': True,
-
-    # Set the same-site attribute on the access token cookie to 'Lax' or 'Strict'
-    # to prevent CSRF attacks through cookies.
-    'AUTH_COOKIE_SAMESITE': 'Lax',
-
-    # Configure the name of the refresh token cookie, if you are using cookies
-    'AUTH_REFRESH_COOKIE': 'refresh_token',
-
-    # Set the secure flag for the refresh token cookie to True if your site is
-    # served over HTTPS.
-    'AUTH_REFRESH_COOKIE_SECURE': False,
-
-    # Use HttpOnly flag on the refresh token cookie to prevent client-side
-    # JavaScript from accessing the cookie, mitigating XSS attacks.
-    'AUTH_REFRESH_COOKIE_HTTP_ONLY': True,
-
-    # Set the same-site attribute on the refresh token cookie to 'Lax' or 'Strict'
-    # to prevent CSRF attacks through cookies.
-    'AUTH_REFRESH_COOKIE_SAMESITE': 'Lax',
+    # Shorten the sliding token lifetime to require users to re-authenticate more often
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=15),  # Adjusted to 15 minutes
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=7),  # Reduced to 7 days
 }
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -195,6 +176,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

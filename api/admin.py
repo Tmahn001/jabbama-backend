@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Order, OrderItem
+from .models import Category, Product, Order, OrderItem, Payment
 
 # Model admin classes
 @admin.register(Category)
@@ -26,5 +26,10 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_filter = ('order__created_at',)
     search_fields = ('order__customer__username', 'product__name')
 
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ('order', 'transaction_id', 'amount', 'status', 'user')
+    list_filter = ('order__created_at',)
+    search_fields = ('order__customer__username', '')
 # Register your model admin classes
 

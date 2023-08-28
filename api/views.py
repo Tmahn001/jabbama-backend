@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, filters, generics
-from .models import Category, Product, Order
-from .serializers import CategorySerializer, WriteProductSerializer, ReadProductSerializer, OrderSerializer
+from .models import Category, Product, Order, OrderItem, Payment
+from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -90,4 +90,20 @@ class UserDetailsView(APIView):
         }
 
         return Response(user_data)
+
+class OrderListCreateView(generics.ListCreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]  
+
+
+
+
+class OrderRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+class PaymentViewSet(viewsets.ModelViewSet):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
 

@@ -30,6 +30,7 @@ class Product(models.Model):
     discount_price = models.FloatField(blank=True, null=True)
     stock = models.IntegerField(default=0)
     image = models.ImageField(upload_to='products/')
+    color = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

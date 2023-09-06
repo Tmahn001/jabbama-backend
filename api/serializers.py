@@ -19,13 +19,13 @@ class CategorySerializer(serializers.ModelSerializer):
 class WriteProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'price', 'on_discount', 'discount_price', 'category', 'stock', 'description', 'image']
+        fields = ['name', 'price', 'on_discount', 'discount_price', 'category', 'stock', 'description', 'image', 'color']
 
 class ReadProductSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'on_discount', 'discount_price', 'category', 'stock', 'description', 'image']
+        fields = ['id', 'name', 'price', 'on_discount', 'discount_price', 'category', 'stock', 'description', 'image', 'color']
         read_only_fields = fields
 
 class OrderItemSerializer(serializers.ModelSerializer):
